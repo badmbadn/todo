@@ -7,8 +7,8 @@ const Footer = () => {
 
     const btnStatus = [ 
         {value:'Все',class:'selected',id:1},
-        {value:'Активный',id:2},
-        {value:'Завершенный',id:3},
+        {value:'Активный',class:null,id:2},
+        {value:'Завершенный',class:null,id:3},
     ]
 
     return (
