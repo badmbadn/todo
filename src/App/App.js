@@ -8,8 +8,8 @@ export default class App extends Component {
 
     state = {
         data: [
-            {descr:'Завершенная задача',class:null,id:0},
-            {descr:'Editing task',class:null,id:1},
+            {descr:'Завершенная задача',class:'completed',id:0},
+            {descr:'Editing task',class:'edit',id:1},
             {descr:'Активная задача',class : null,id:2},
     
         ],
