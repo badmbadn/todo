@@ -1,19 +1,27 @@
-import React from "react";
+import React, { Component } from "react";
 
-const View = ({descr}) => {
+export default class View extends Component  {
 
-    return (
-        <div className="view">
-            <input type="checkbox" className="toggle"/>
-            <label>
-                <span className="description">{descr}</span>
-                <span className="created"></span>
-            </label>
-            <button className="icon icon-edit"></button>
-            <button className="icon icon-destroy"></button>
-        </div>
-    )
+  
+
+    render() {
+        const {descr} = this.props
+        
+
+      
+        return (
+            <div className="view">
+                <input type="checkbox" className="toggle"/>
+                <label>
+                    <span className="description" >{descr}</span>
+                    <span className="created"></span>
+                </label>
+                <button className="icon icon-edit"></button>
+                <button className="icon icon-destroy"></button>
+            </div>
+        )
+    }
+    
 
 }
 
-export default View

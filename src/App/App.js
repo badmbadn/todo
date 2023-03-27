@@ -1,29 +1,51 @@
- import React from "react";
+ import React, {Component} from "react";
  import Header from "../Header/Header";
 import TaskList from "../TaskList/TaskList";
 import Footer from "../Footer/Footer";
  import './App.css'
 
- const App = () => {
+export default class App extends Component {
 
-    const data = [
-        {descr:'Завершенная задача',class:'completed',id:1},
-        {descr:'Editing task',class:'editing',id:2},
-        {descr:'Активная задача',class : null,id:3},
+    state = {
+        data: [
+            {descr:'Завершенная задача',class:null,id:0},
+            {descr:'Editing task',class:null,id:1},
+            {descr:'Активная задача',class : null,id:2},
+    
+        ],
+        done: false
+    }
+    // onToggle = (id) => {
+    //     this.setState(({data,done}) => {
+    //         const arr = data
+    //         const res = arr.map((el,i) => {
+    //             return id === i ?(done ? {...el, class:null} :{...el, class:'completed'} ) : el
+    //         })
 
-    ]
-
-    return (
-        <section className="todoapp">
-            <Header/>
-            <section  className="main">
-                <TaskList dataTasks={data}/>
-                <Footer/>
+    //         return {
+    //             done:!done,
+    //             data:res
+                
+                
+    //         }
+    //     })
+        
+    // }
+    
+    render () {
+        const {data} = this.state
+        return (
+            <section className="todoapp">
+                <Header/>
+                <section  className="main">
+                    <TaskList dataTasks={data}/>
+                    <Footer/>
+                </section>
             </section>
-        </section>
-    )
+        )
+    }
+   
 
 }
 
 
-export default App
