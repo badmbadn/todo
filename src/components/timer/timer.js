@@ -40,6 +40,7 @@ class Timer extends Component {
   onStop = () => {
     const { onStop } = this.props;
     this.countDown.pause();
+    console.log('dd');
     onStop();
     this.setState({
       start: false,
