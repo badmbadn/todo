@@ -1,6 +1,6 @@
 /* eslint-disable react/no-did-update-set-state */
 import './timer.css';
-import { Component } from 'react';
+import { useState } from 'react';
 import Countdown from 'react-countdown';
 
 const renderer = ({ minutes, seconds, completed }) => {
@@ -10,54 +10,37 @@ const renderer = ({ minutes, seconds, completed }) => {
   return <span>{`${minutes}:${seconds}`}</span>;
 };
 
-class Timer extends Component {
-  countDown = null;
+function Timer({ time, start, onStart, onStop }) {
+  let countDown = null;
 
-  constructor(props) {
-    const { time, start } = props;
-    super(props);
-    this.state = {
-      time,
-      start,
-    };
-  }
+  const [timer] = useState(time);
+  const [come, SetStart] = useState(start);
 
-  countDownRef = (countdown) => {
+  const countDownRef = (countdown) => {
     if (countdown) {
-      this.countDown = countdown.getApi();
+      countDown = countdown.getApi();
     }
   };
 
-  onStart = () => {
-    const { onStart } = this.props;
-    this.countDown.start();
+  const play = () => {
+    countDown.start();
     onStart();
-    this.setState({
-      start: true,
-    });
+    SetStart(true);
   };
 
-  onStop = () => {
-    const { onStop } = this.props;
-    this.countDown.pause();
-    console.log('dd');
+  const stop = () => {
+    countDown.pause();
     onStop();
-    this.setState({
-      start: false,
-    });
+    SetStart(false);
   };
 
-  render() {
-    const { time, start } = this.state;
-    const { countDownRef } = this;
-    return (
-      <div className="timer">
-        <button aria-label="button" className="icon icon-play" type="submit" onClick={this.onStart} />
-        <button aria-label="button" className="icon icon-pause" type="submit" onClick={this.onStop} />
-        <Countdown ref={countDownRef} date={time} renderer={renderer} autoStart={start} />
-      </div>
-    );
-  }
+  return (
+    <div className="timer">
+      <button aria-label="button" className="icon icon-play" type="submit" onClick={play} />
+      <button aria-label="button" className="icon icon-pause" type="submit" onClick={stop} />
+      <Countdown ref={countDownRef} date={timer} renderer={renderer} autoStart={come} />
+    </div>
+  );
 }
 
 export default Timer;
