@@ -28,33 +28,36 @@ function App() {
   const [filter, setFilter] = useState('all');
 
   const start = (id) => {
-    setData((data) => {
-      const idx = data.findIndex((todo) => todo.id === id);
-      const task = data[idx];
-      if (!task.start) {
-        task.start = true;
-        task.mainTimer = setInterval(() => {
-          if (task.time <= 0) {
-            clearInterval(task.mainTimer);
+    setData(
+      data.map((el) => {
+        if (el.id === id) {
+          if (!el.start) {
+            el.start = true;
+            el.mainTimer = setInterval(() => {
+              if (el.time <= 0) {
+                clearInterval(el.mainTimer);
+              }
+              el.time -= 1000;
+            }, 1000);
           }
-          task.time -= 1000;
-          data[id] = task;
-        }, 1000);
-      }
-      return data;
-    });
+        }
+        return el;
+      })
+    );
   };
 
   const stop = (id) => {
-    setData((data) => {
-      const idx = data.findIndex((todo) => todo.id === id);
-      const task = data[idx];
-      if (task.start) {
-        task.start = false;
-        clearInterval(task.mainTimer);
-      }
-      return data;
-    });
+    setData(
+      data.map((el) => {
+        if (el.id === id) {
+          if (el.start) {
+            el.start = false;
+            clearInterval(el.mainTimer);
+          }
+        }
+        return el;
+      })
+    );
   };
 
   const changeTodoData = (tasks, id, key) => tasks.map((el) => (el.id === id ? { ...el, [key]: !el[key] } : el));
