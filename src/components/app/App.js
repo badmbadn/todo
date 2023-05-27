@@ -22,43 +22,53 @@ const createTodoItem = (descr, time) => {
 };
 
 function App() {
-  const maxInput = 20;
+  const maxInput = 25;
 
   const [data, setData] = useState([createTodoItem('task1', 100000)]);
   const [filter, setFilter] = useState('all');
 
+  const starts = (data, task) => {
+    const idx = data.findIndex((el) => el.id === task.id);
+    if (data[idx]) {
+      data[idx] = task;
+    } else {
+      clearInterval(task.mainTimer);
+    }
+    return data;
+  };
+
   const start = (id) => {
-    setData(
-      data.map((el) => {
-        if (el.id === id) {
-          if (!el.start) {
-            el.start = true;
-            el.mainTimer = setInterval(() => {
-              if (el.time <= 0) {
-                clearInterval(el.mainTimer);
-              }
-              el.time -= 1000;
-            }, 1000);
-          }
+    const idx = data.findIndex((el) => el.id === id);
+    const task = data[idx];
+    if (!task.start) {
+      task.start = true;
+      task.mainTimer = setInterval(() => {
+        if (task.time <= 0) {
+          clearInterval(task.mainTimer);
         }
-        return el;
-      })
-    );
+        task.time -= 1000;
+      }, 1000);
+    }
+    setData(starts(data, task));
+  };
+
+  const stops = (data, id) => {
+    const idx = data.findIndex((el) => el.id === id);
+    const task = data[idx];
+    if (task.start) {
+      task.start = false;
+      clearInterval(task.mainTimer);
+    }
+    return data;
   };
 
   const stop = (id) => {
-    setData(
-      data.map((el) => {
-        if (el.id === id) {
-          if (el.start) {
-            el.start = false;
-            clearInterval(el.mainTimer);
-          }
-        }
-        return el;
-      })
-    );
+    setData(stops(data, id));
   };
+
+  useEffect(() => {
+    console.log('dee');
+  }, [data]);
 
   const changeTodoData = (tasks, id, key) => tasks.map((el) => (el.id === id ? { ...el, [key]: !el[key] } : el));
 
