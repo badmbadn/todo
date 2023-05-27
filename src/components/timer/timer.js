@@ -1,6 +1,6 @@
 /* eslint-disable react/no-did-update-set-state */
 import './timer.css';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Countdown from 'react-countdown';
 
 const renderer = ({ minutes, seconds, completed }) => {
@@ -13,24 +13,22 @@ const renderer = ({ minutes, seconds, completed }) => {
 function Timer({ time, start, onStart, onStop }) {
   const [timer] = useState(time);
   const [come, SetStart] = useState(start);
-  const rd = useRef(null);
+  const countDown = useRef(null);
 
   const countDownRef = (countdown) => {
     if (countdown) {
-      rd.current = countdown.getApi();
+      countDown.current = countdown.getApi();
     }
   };
-  useEffect(() => {
-    console.log(rd.current);
-  }, []);
+
   const play = () => {
-    rd.current.start();
+    countDown.current.start();
     onStart();
     SetStart(true);
   };
 
   const stop = () => {
-    rd.current.pause();
+    countDown.current.pause();
     onStop();
     SetStart(false);
   };
