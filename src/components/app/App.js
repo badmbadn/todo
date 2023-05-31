@@ -1,7 +1,5 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable arrow-body-style */
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import Header from '../header/Header';
@@ -27,48 +25,34 @@ function App() {
   const [data, setData] = useState([createTodoItem('task1', 100000)]);
   const [filter, setFilter] = useState('all');
 
-  const starts = (data, task) => {
-    const idx = data.findIndex((el) => el.id === task.id);
-    if (data[idx]) {
-      data[idx] = task;
-    } else {
-      clearInterval(task.mainTimer);
-    }
-    return data;
-  };
-
   const start = (id) => {
-    const idx = data.findIndex((el) => el.id === id);
-    const task = data[idx];
-    if (!task.start) {
-      task.start = true;
-      task.mainTimer = setInterval(() => {
-        if (task.time <= 0) {
-          clearInterval(task.mainTimer);
+    setData(
+      data.map((el) => {
+        if (el.id === id) {
+          el.start = true;
+          el.mainTimer = setInterval(() => {
+            if (el.time <= 0) {
+              clearInterval(el.mainTimer);
+            }
+            el.time -= 1000;
+          }, 1000);
         }
-        task.time -= 1000;
-      }, 1000);
-    }
-    setData(starts(data, task));
-  };
-
-  const stops = (data, id) => {
-    const idx = data.findIndex((el) => el.id === id);
-    const task = data[idx];
-    if (task.start) {
-      task.start = false;
-      clearInterval(task.mainTimer);
-    }
-    return data;
+        return el;
+      })
+    );
   };
 
   const stop = (id) => {
-    setData(stops(data, id));
+    setData(
+      data.map((el) => {
+        if (el.id === id) {
+          el.start = false;
+          clearInterval(el.mainTimer);
+        }
+        return el;
+      })
+    );
   };
-
-  useEffect(() => {
-    console.log('dee');
-  }, [data]);
 
   const changeTodoData = (tasks, id, key) => tasks.map((el) => (el.id === id ? { ...el, [key]: !el[key] } : el));
 

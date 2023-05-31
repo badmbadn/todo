@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Timer from '../timer/timer';
 
 function View(props) {
-  const { id, done, descr, created, time, onCompleted, onDeleted, start, onStart, onStop } = props;
+  const { id, done, descr, mainTimer, created, time, onCompleted, onDeleted, start, onStart, onStop } = props;
 
   const onStartManage = () => {
     onStart(id);
@@ -20,7 +20,15 @@ function View(props) {
       <input className="toggle" type="checkbox" checked={done} readOnly onClick={onCompleted.bind(this)} />
       <div className="label">
         <div className="description">{descr}</div>
-        <Timer time={time} start={start} onStart={onStartManage} onStop={onStopManage} />
+        <Timer
+          time={time}
+          mainTimer={mainTimer}
+          id={id}
+          start={start}
+          onStart={onStartManage}
+          onStop={onStopManage}
+          done={done}
+        />
         <div className="created">
           {`created ${formatDistanceToNow(created, {
             includeSeconds: true,

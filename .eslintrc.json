@@ -29,6 +29,8 @@
   },
   "plugins": ["react", "prettier", "import"],
   "rules": {
+    "no-use-before-define": "off",
+    "no-param-reassign": [2, { "props": false }],
     "no-console":"off",
     "no-unused-vars":"off",
     "no-undef":"off",
