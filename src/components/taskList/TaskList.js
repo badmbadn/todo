@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import View from '../view/View';
 
 function TaskList(props) {
-  const { data, onDeleted, onCompleted, onStart, onStop } = props;
+  const { data, onDeleted, onCompleted, onStart, onStop, startss } = props;
   const itemTasks = data.map(({ id, done, descr, start, edit, created, time, mainTimer }) => {
     let className = '';
     if (done) {
@@ -28,6 +28,7 @@ function TaskList(props) {
           onStart={onStart}
           onStop={onStop}
           mainTimer={mainTimer}
+          startss={startss}
         />
       </li>
     );

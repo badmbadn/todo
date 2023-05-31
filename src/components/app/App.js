@@ -15,6 +15,7 @@ const createTodoItem = (descr, time) => {
     id: uuidv4(),
     created: new Date(),
     edit: false,
+    mainTimer: null,
   };
   return res;
 };
@@ -22,7 +23,7 @@ const createTodoItem = (descr, time) => {
 function App() {
   const maxInput = 25;
 
-  const [data, setData] = useState([createTodoItem('task1', 100000)]);
+  const [data, setData] = useState([]);
   const [filter, setFilter] = useState('all');
 
   const start = (id) => {

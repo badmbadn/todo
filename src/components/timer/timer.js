@@ -16,11 +16,9 @@ function Timer({ time, start, onStart, onStop, mainTimer }) {
   const countDown = useRef(null);
   const interval = useRef(null);
   useEffect(() => {
-    if (maintimer) {
-      interval.current = maintimer;
-    }
+    interval.current = maintimer;
     return () => clearInterval(interval.current);
-  }, [maintimer]);
+  }, [mainTimer]);
 
   const countDownRef = (countdown) => {
     if (countdown) {
