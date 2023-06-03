@@ -10,13 +10,11 @@ const renderer = ({ minutes, seconds, completed }) => {
 };
 
 function Timer({ time, start, onStart, onStop, mainTimer }) {
-  const [timer] = useState(time);
   const [come, SetStart] = useState(start);
-  const [maintimer] = useState(mainTimer);
   const countDown = useRef(null);
   const interval = useRef(null);
   useEffect(() => {
-    interval.current = maintimer;
+    interval.current = mainTimer;
     return () => clearInterval(interval.current);
   }, [mainTimer]);
 
@@ -42,7 +40,7 @@ function Timer({ time, start, onStart, onStop, mainTimer }) {
     <div className="timer">
       <button aria-label="button" className="icon icon-play" type="submit" onClick={play} />
       <button aria-label="button" className="icon icon-pause" type="submit" onClick={stop} />
-      <Countdown ref={countDownRef} date={timer} renderer={renderer} autoStart={come} />
+      <Countdown ref={countDownRef} date={time} renderer={renderer} autoStart={come} />
     </div>
   );
 }

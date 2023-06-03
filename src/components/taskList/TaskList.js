@@ -28,7 +28,6 @@ function TaskList(props) {
           onStart={onStart}
           onStop={onStop}
           mainTimer={mainTimer}
-          startss={startss}
         />
       </li>
     );

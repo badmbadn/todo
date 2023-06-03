@@ -6,24 +6,24 @@ import Header from '../header/Header';
 import TaskList from '../taskList/TaskList';
 import Footer from '../footer/Footer';
 
-const createTodoItem = (descr, time) => {
-  const res = {
-    descr,
-    time,
-    start: false,
-    done: false,
-    id: uuidv4(),
-    created: new Date(),
-    edit: false,
-    mainTimer: null,
-  };
-  return res;
-};
-
 function App() {
   const maxInput = 25;
 
-  const [data, setData] = useState([]);
+  const createTodoItem = (descr, time) => {
+    const res = {
+      descr,
+      time,
+      start: false,
+      done: false,
+      id: uuidv4(),
+      created: new Date(),
+      edit: false,
+      mainTimer: null,
+    };
+    return res;
+  };
+
+  const [data, setData] = useState([createTodoItem('task', 200000)]);
   const [filter, setFilter] = useState('all');
 
   const start = (id) => {
@@ -31,12 +31,15 @@ function App() {
       data.map((el) => {
         if (el.id === id) {
           el.start = true;
-          el.mainTimer = setInterval(() => {
-            if (el.time <= 0) {
-              clearInterval(el.mainTimer);
-            }
-            el.time -= 1000;
-          }, 1000);
+          if (el.start === true) {
+            el.mainTimer = setInterval(() => {
+              console.log('df');
+              if (el.time <= 0) {
+                clearInterval(el.mainTimer);
+              }
+              el.time -= 1000;
+            }, 1000);
+          }
         }
         return el;
       })
@@ -48,7 +51,9 @@ function App() {
       data.map((el) => {
         if (el.id === id) {
           el.start = false;
-          clearInterval(el.mainTimer);
+          if (el.start === false) {
+            clearInterval(el.mainTimer);
+          }
         }
         return el;
       })

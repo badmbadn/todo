@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Timer from '../timer/timer';
 
 function View(props) {
-  const { id, done, descr, mainTimer, startss, created, time, onCompleted, onDeleted, start, onStart, onStop } = props;
+  const { id, done, descr, mainTimer, created, time, onCompleted, onDeleted, start, onStart, onStop } = props;
 
   const onStartManage = () => {
     onStart(id);
