@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import Header from '../header/Header';
@@ -9,37 +9,48 @@ import Footer from '../footer/Footer';
 function App() {
   const maxInput = 25;
 
-  const createTodoItem = (descr, time) => {
-    const res = {
-      descr,
-      time,
-      start: false,
-      done: false,
-      id: uuidv4(),
-      created: new Date(),
-      edit: false,
-      mainTimer: null,
-    };
-    return res;
-  };
-
-  const [data, setData] = useState([createTodoItem('task', 200000)]);
+  const [data, setData] = useState([]);
+  const [filtered, setFiltered] = useState(data);
   const [filter, setFilter] = useState('all');
 
+  useEffect(() => {
+    function renderFilter() {
+      if (filter === 'all') {
+        setFiltered(data);
+      } else if (filter === 'active') {
+        const newArray = data.filter((item) => item.done !== true);
+        setFiltered(newArray);
+      } else {
+        const newArray = data.filter((item) => item.done === true);
+        setFiltered(newArray);
+      }
+    }
+    renderFilter();
+  }, [filter, data]);
+
   const start = (id) => {
-    setData(
-      data.map((el) => {
-        if (el.id === id) {
+    setData((prevData) =>
+      prevData.map((el) => {
+        if (el.id === id && !el.done) {
           el.start = true;
-          if (el.start === true) {
-            el.mainTimer = setInterval(() => {
-              console.log('df');
-              if (el.time <= 0) {
-                clearInterval(el.mainTimer);
-              }
-              el.time -= 1000;
-            }, 1000);
-          }
+          el.mainTimer = setInterval(() => {
+            setData((prevData) =>
+              prevData.map((task) => {
+                if (task.id === id) {
+                  if (!task.done) {
+                    // проверка на отписку от таймера console.log('tick taimer');
+                    if (task.time <= 0) {
+                      clearInterval(task.mainTimer);
+                    }
+                    task.time -= 1000;
+                  } else {
+                    clearInterval(task.mainTimer);
+                  }
+                }
+                return task;
+              })
+            );
+          }, 1000);
         }
         return el;
       })
@@ -51,9 +62,7 @@ function App() {
       data.map((el) => {
         if (el.id === id) {
           el.start = false;
-          if (el.start === false) {
-            clearInterval(el.mainTimer);
-          }
+          clearInterval(el.mainTimer);
         }
         return el;
       })
@@ -78,27 +87,34 @@ function App() {
     setData((state) => state.filter((item) => item.done !== true));
   };
 
-  const addTask = (descr, min, sec) => {
-    const time = (min * 60 + sec) * 1000;
-    const task = createTodoItem();
-    setData((state) => [...state, { ...task, descr, time }]);
+  const createTodoItem = (descr, time) => {
+    const res = {
+      descr,
+      time,
+      start: false,
+      done: false,
+      id: uuidv4(),
+      created: new Date(),
+      edit: false,
+      mainTimer: null,
+    };
+    return res;
   };
 
-  const filterTasks = () => {
-    if (filter === 'all') return data;
-    if (filter === 'active') {
-      return data.filter((item) => item.done !== true);
-    }
-    return data.filter((item) => item.done === true);
+  const addTask = (descr, min, sec) => {
+    const time = (min * 60 + sec) * 1000;
+    const task = createTodoItem(descr, time);
+    setData([...data, task]);
   };
 
   const todoCount = data.filter((el) => !el.done).length;
+
   return (
     <section className="todoapp">
       <Header addTask={addTask} maxInput={maxInput} />
       <section className="main">
         <TaskList
-          data={filterTasks()}
+          data={filtered}
           onDeleted={deleteItem}
           onCompleted={onToggle}
           maxInput={maxInput}

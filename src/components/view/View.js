@@ -28,6 +28,7 @@ function View(props) {
           onStart={onStartManage}
           onStop={onStopManage}
           done={done}
+          onDeleted={onDeleted}
         />
         <div className="created">
           {`created ${formatDistanceToNow(created, {
