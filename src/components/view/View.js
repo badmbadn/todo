@@ -1,44 +1,27 @@
+import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import './View.css';
 import PropTypes from 'prop-types';
 
 import Timer from '../timer/timer';
 
+import './View.css';
+
 function View(props) {
-  const { id, done, descr, mainTimer, created, time, onCompleted, onDeleted, start, onStart, onStop } = props;
-
-  const onStartManage = () => {
-    onStart(id);
-  };
-
-  const onStopManage = () => {
-    onStop(id);
-  };
+  const { id, done, descr, created, onCompleted, onDeleted, onStart, onStop, updateTimer, start, time } = props;
 
   return (
     <div className="view">
-      <input className="toggle" type="checkbox" checked={done} readOnly onClick={onCompleted.bind(this)} />
+      <input className="toggle" type="checkbox" readOnly onClick={onCompleted} checked={done} />
       <div className="label">
-        <div className="description">{descr}</div>
-        <Timer
-          time={time}
-          mainTimer={mainTimer}
-          id={id}
-          start={start}
-          onStart={onStartManage}
-          onStop={onStopManage}
-          done={done}
-          onDeleted={onDeleted}
-        />
-        <div className="created">
-          {`created ${formatDistanceToNow(created, {
-            includeSeconds: true,
-            addSuffix: true,
-          })}`}
-        </div>
+        <span className="description">{descr}</span>
+        <Timer id={id} time={time} start={start} onStart={onStart} onStop={onStop} updateTimer={updateTimer} />
+        <div className="created">{`created ${formatDistanceToNow(created, {
+          includeSeconds: true,
+          addSuffix: true,
+        })}`}</div>
       </div>
       <button type="button" aria-label="edit" className="icon icon-edit" />
-      <button type="button" aria-label="destroy" className="icon icon-destroy" onClick={onDeleted} />
+      <button type="button" className="icon icon-destroy" aria-label="destroy" onClick={onDeleted} />
     </div>
   );
 }

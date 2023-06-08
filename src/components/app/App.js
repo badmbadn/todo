@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import Header from '../header/Header';
@@ -10,8 +10,8 @@ function App() {
   const maxInput = 25;
 
   const [data, setData] = useState([]);
-  const [filtered, setFiltered] = useState(data);
   const [filter, setFilter] = useState('all');
+  const [filtered, setFiltered] = useState(data);
 
   useEffect(() => {
     function renderFilter() {
@@ -28,45 +28,24 @@ function App() {
     renderFilter();
   }, [filter, data]);
 
-  const start = (id) => {
-    setData((prevData) =>
-      prevData.map((el) => {
-        if (el.id === id && !el.done) {
-          el.start = true;
-          el.mainTimer = setInterval(() => {
-            setData((prevData) =>
-              prevData.map((task) => {
-                if (task.id === id) {
-                  if (!task.done) {
-                    // проверка на отписку от таймера console.log('tick taimer');
-                    if (task.time <= 0) {
-                      clearInterval(task.mainTimer);
-                    }
-                    task.time -= 1000;
-                  } else {
-                    clearInterval(task.mainTimer);
-                  }
-                }
-                return task;
-              })
-            );
-          }, 1000);
-        }
-        return el;
-      })
-    );
+  const createTodoItem = (descr, time) => {
+    const res = {
+      descr,
+      time,
+      id: uuidv4(),
+      edit: 'active',
+      done: false,
+      created: new Date(),
+      startTime: null,
+      start: false,
+    };
+    return res;
   };
 
-  const stop = (id) => {
-    setData(
-      data.map((el) => {
-        if (el.id === id) {
-          el.start = false;
-          clearInterval(el.mainTimer);
-        }
-        return el;
-      })
-    );
+  const addTask = (descr, min, sec) => {
+    const time = (min * 60 + sec) * 1000;
+    const newItem = createTodoItem(descr, time);
+    setData((data) => [...data, newItem]);
   };
 
   const changeTodoData = (tasks, id, key) => tasks.map((el) => (el.id === id ? { ...el, [key]: !el[key] } : el));
@@ -75,36 +54,69 @@ function App() {
     setData(() => changeTodoData(data, id, 'done'));
   };
 
-  const onFilterChange = (name) => {
-    setFilter(name);
-  };
-
   const deleteItem = (id) => {
     setData((state) => state.filter((item) => item.id !== id));
+  };
+
+  const updateTimer = useCallback(
+    (id) => {
+      const index = data.findIndex((el) => el.id === id);
+      if (data[index].start === true) {
+        if (data[index].time <= 1000) {
+          setData((data) => {
+            const newTaskData = data.slice(0);
+            newTaskData[index].time = 0;
+            newTaskData[index].startTime = null;
+            newTaskData[index].start = false;
+            return newTaskData;
+          });
+        } else {
+          const now = new Date().getTime();
+          setData((data) => {
+            const newTaskData = data.slice(0);
+            newTaskData[index].time = data[index].time - (now - data[index].startTime);
+            newTaskData[index].startTime = now;
+            return newTaskData;
+          });
+        }
+      }
+    },
+    [data]
+  );
+
+  const onStart = (id) => {
+    const index = data.findIndex((el) => el.id === id);
+    if (data[index].start === false) {
+      const now = new Date().getTime();
+      setData((data) => {
+        const newTaskData = data.slice(0);
+        newTaskData[index].start = true;
+        newTaskData[index].startTime = now;
+        return newTaskData;
+      });
+    }
+  };
+
+  const onStop = (id) => {
+    const index = data.findIndex((el) => el.id === id);
+    if (data[index].start === true) {
+      const now = new Date().getTime();
+      setData((data) => {
+        const newTaskData = data.slice(0);
+        newTaskData[index].start = false;
+        newTaskData[index].time -= now - newTaskData[index].startTime;
+        newTaskData[index].startTime = now;
+        return newTaskData;
+      });
+    }
   };
 
   const deleteCompletedItem = () => {
     setData((state) => state.filter((item) => item.done !== true));
   };
 
-  const createTodoItem = (descr, time) => {
-    const res = {
-      descr,
-      time,
-      start: false,
-      done: false,
-      id: uuidv4(),
-      created: new Date(),
-      edit: false,
-      mainTimer: null,
-    };
-    return res;
-  };
-
-  const addTask = (descr, min, sec) => {
-    const time = (min * 60 + sec) * 1000;
-    const task = createTodoItem(descr, time);
-    setData([...data, task]);
+  const onFilterChange = (name) => {
+    setFilter(name);
   };
 
   const todoCount = data.filter((el) => !el.done).length;
@@ -115,17 +127,18 @@ function App() {
       <section className="main">
         <TaskList
           data={filtered}
-          onDeleted={deleteItem}
           onCompleted={onToggle}
-          maxInput={maxInput}
-          onStart={start}
-          onStop={stop}
+          onDeleted={deleteItem}
+          onStart={onStart}
+          onStop={onStop}
+          updateTimer={updateTimer}
         />
         <Footer
+          tasks={data}
           filter={filter}
           onFilterChange={onFilterChange}
-          deleteCompletedItem={deleteCompletedItem}
           todoCount={todoCount}
+          deleteCompletedItem={deleteCompletedItem}
         />
       </section>
     </section>

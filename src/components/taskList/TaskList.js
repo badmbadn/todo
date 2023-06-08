@@ -1,38 +1,39 @@
-/* eslint-disable react/forbid-prop-types */
-import './TaskList.css';
-import PropTypes from 'prop-types';
+import React from 'react';
 
 import View from '../view/View';
 
-function TaskList(props) {
-  const { data, onDeleted, onCompleted, onStart, onStop, startss } = props;
-  const itemTasks = data.map(({ id, done, descr, start, edit, created, time, mainTimer }) => {
+import './TaskList.css';
+
+function TaskList({ data, onCompleted, onDeleted, onStart, onStop, updateTimer }) {
+  const taskList = data.map(({ id, edit, descr, created, start, time, done }) => {
     let className = '';
     if (done) {
       className += 'completed';
     }
-    if (edit) {
+    if (edit === 'active') {
       className += '';
     }
     return (
-      <li key={id} className={className}>
+      <li className={className} key={id}>
         <View
           id={id}
-          done={done}
           descr={descr}
-          start={start}
           created={created}
-          time={Date.now() + time}
-          onDeleted={() => onDeleted(id)}
+          done={done}
           onCompleted={() => onCompleted(id)}
-          onStart={onStart}
-          onStop={onStop}
-          mainTimer={mainTimer}
+          onDeleted={() => onDeleted(id)}
+          onStart={() => onStart(id)}
+          onStop={() => onStop(id)}
+          updateTimer={updateTimer}
+          edit={edit}
+          start={start}
+          time={time}
         />
       </li>
     );
   });
-  return <ul className="todo-list">{itemTasks}</ul>;
+
+  return <ul className="todo-list">{taskList}</ul>;
 }
 
 TaskList.defaultProps = {
@@ -44,10 +45,6 @@ TaskList.defaultProps = {
       created: Date.now(),
     },
   ],
-};
-
-TaskList.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default TaskList;
